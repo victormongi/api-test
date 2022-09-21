@@ -24,6 +24,7 @@ pipeline {
               sh "kubectl apply -f deployment.yaml -n staging"
             }
             else if ( env.GIT_BRANCH == 'main' ) {
+              sh "kubectl get nodes"
               sh "sed -i 's/IMAGE_TAG/${BUILD_NUMBER}/g' deployment.yaml"
               sh "kubectl apply -f deployment.yaml -n production"
             }
