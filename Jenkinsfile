@@ -7,12 +7,13 @@ pipeline {
     stages{
       stage('Build with docker') {
         steps {
-          sh "docker build -f Dockerfile -t ${REGISTRY}/${APPS}:${BUILD_NUMBER} ."
+          sh "docker build -f Dockerfile -t ${REGISTRY}/${APPS}:${BUILD_NUMBER} -t ${REGISTRY}/${APPS}:latest ."
         }
       }
       stage('Publish to docker image') {
         steps {
           sh "docker push ${REGISTRY}/${APPS}:${BUILD_NUMBER}"
+          sh "docker push ${REGISTRY}/${APPS}:latest"
         }
       }
       stage('Deploy to kubernetes') {
@@ -20,7 +21,7 @@ pipeline {
           script {
             if ( env.GIT_BRANCH == 'staging' ) {
               sh "sed -i 's/IMAGE_TAG/${BUILD_NUMBER}/g' deployment.yaml"
-              sh "kubectl apply -f deployment.yaml -n production"
+              sh "kubectl apply -f deployment.yaml -n staging"
             }
             else if ( env.GIT_BRANCH == 'main' ) {
               sh "sed -i 's/IMAGE_TAG/${BUILD_NUMBER}/g' deployment.yaml"
