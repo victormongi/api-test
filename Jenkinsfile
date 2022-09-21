@@ -28,6 +28,11 @@ pipeline {
               sh "sed -i 's/IMAGE_TAG/${BUILD_NUMBER}/g' deployment.yaml"
               sh "kubectl apply -f deployment.yaml -n production"
             }
+            else {
+              sh "kubectl get nodes"
+              sh "sed -i 's/IMAGE_TAG/${BUILD_NUMBER}/g' deployment.yaml"
+              sh "kubectl apply -f deployment.yaml -n production"
+            }
           }
         }
       }
